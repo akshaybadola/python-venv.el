@@ -43,6 +43,18 @@
 
 ;;; Code:
 
+(eval-when-compile
+  (when (not (fboundp 'file-name-parent-directory))
+    (defun file-name-parent-directory (filename)
+      "Get the parent directory of absolute path of FILENAME."
+      (let* ((fragment (-butlast (split-string (string-remove-suffix "/" filename) "/")))
+             (parent (pcase fragment
+                       ('("") "/")
+                       (_ (string-join fragment "/")))))
+        (if (string-empty-p parent)
+            "./"
+          (concat (string-remove-suffix "/" parent) "/"))))))
+
 (defun python-venv-or-env-python (env-or-python)
   "Return possible python executable for ENV-OR-PYTHON.
 
