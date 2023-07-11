@@ -140,7 +140,7 @@ Update the module with optional UPDATE."
      (format "%s install %s %s" pip (if update "-U" "") modname)
      (format "*%s-install-cmd*" modname) (format "*%s-install-cmd*" modname))))
 
-(defun python-venv-get-system-python ()
+(defun python-venv-get-system-python (&optional default-python)
   "Get system python3 executable.
 
 Detect if we are in a virtual environment and ask confirmation
@@ -153,10 +153,11 @@ from user if we are."
     (unless python
       (error "No python3 executable found in current paths"))
     (if in-venv
-        (if (y-or-n-p
-             (format "Python executable %s seems to be in a virtualenv.  Really use? " python))
-            python
-          (ido-read-file-name "Enter python executable to use: "))
+        (if default-python default-python
+          (if (y-or-n-p
+               (format "Python executable %s seems to be in a virtualenv.  Really use? " python))
+              python
+            (ido-read-file-name "Enter python executable to use: ")))
       python)))
 
 ;; TODO: Add `venv' alternative to `virtualenv' in case it doesn't exist
